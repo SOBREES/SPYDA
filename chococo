@@ -1,0 +1,71 @@
+import pygame
+import sys
+
+# Initialisation de Pygame
+pygame.init()
+
+# Paramètres du jeu
+largeur_fenetre = 800
+hauteur_fenetre = 600
+fps = 60
+
+# Couleurs
+blanc = (255, 255, 255)
+marron = (139, 69, 19)
+
+# Classe pour le joueur
+class Joueur(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((50, 50))
+        self.image.fill(marron)
+        self.rect = self.image.get_rect()
+        self.rect.center = (100, hauteur_fenetre - 50)
+        self.vitesse_y = 0
+
+    def update(self):
+        # Gravité
+        self.vitesse_y += 1
+        self.rect.y += self.vitesse_y
+
+        # Rebondir au sol
+        if self.rect.bottom > hauteur_fenetre:
+            self.rect.bottom = hauteur_fenetre
+            self.vitesse_y = 0
+
+# Initialisation de la fenêtre
+fenetre = pygame.display.set_mode((largeur_fenetre, hauteur_fenetre))
+pygame.display.set_caption("Jeu Chocolat")
+
+# Création des sprites
+all_sprites = pygame.sprite.Group()
+joueur = Joueur()
+all_sprites.add(joueur)
+
+# Boucle de jeu
+horloge = pygame.time.Clock()
+running = True
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Mise à jour des sprites
+    all_sprites.update()
+
+    # Dessin de l'arrière-plan
+    fenetre.fill(blanc)
+
+    # Dessin des sprites
+    all_sprites.draw(fenetre)
+
+    # Rafraîchissement de l'écran
+    pygame.display.flip()
+
+    # Limite de frames par seconde
+    horloge.tick(fps)
+
+# Quitter Pygame
+pygame.quit()
+sys.exit()
